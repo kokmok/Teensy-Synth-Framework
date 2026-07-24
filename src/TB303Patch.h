@@ -6,15 +6,17 @@
 #define PATCH_DEFINED
 
 // --- Dimensions : la 303 est monophonique, un seul oscillateur ---
-constexpr int VOICES        = 1;
+constexpr int VOICES        = 2;
 constexpr int OSC_PER_VOICE = 1;
 
+#include "Parameters/Filter.h"
+#include "Parameters/Envelope.h"
 #include <Audio.h>
 
 // --- Le son : réglages caractéristiques de la 303 ---
 struct PatchDescriptor {
     // Oscillateur : saw ou square, rien d'autre sur une 303
-    short oscWaveform[OSC_PER_VOICE] = { WAVEFORM_SAWTOOTH };
+    short oscWaveform[OSC_PER_VOICE] = { WAVEFORM_SQUARE };
     float oscAmplitude = 0.8f;
 
     // Filtre : c'est là que vit le son
@@ -34,12 +36,24 @@ struct PatchDescriptor {
 };
 
 namespace Patch {
+
+    inline Filter filter{ /* cutoffCC */ 1, /* resoCC */ 2 };
+    inline Envelope envelope{ 5, 6, 7, 8 };
+    
     inline PatchDescriptor describe() {
         PatchDescriptor d;
-        d.filterCutoff    = 600.0f;
-        d.filterResonance = 4.2f;
-        d.decay           = 300.0f;
-        d.glideTime       = 0.06f;
+        d.filterCutoff = 600.0f;
+        d.decay        = 300.0f;
+        d.glideTime    = 0.06f;
         return d;
     }
+
+    inline void configure() {
+        envelope.setAttackRange(200.0f);
+        envelope.setDecayRange(600.0f);
+    }
+
+    // La table que handleCC balaie : on pointe vers les Parameter DANS le filtre.
+    inline Parameter* allParams[] = { &filter.cutoff, &filter.resonance, &envelope.attack, &envelope.decay, &envelope.sustain, &envelope.release };
+    inline constexpr int PARAM_COUNT = 6;
 }

@@ -68,6 +68,12 @@ public:
             }
         }
     }
+    void handleCC(byte cc, byte value) {
+        for (int i = 0; i < Patch::PARAM_COUNT; i++) {
+            if (Patch::allParams[i]->listensTo(cc))
+                Patch::allParams[i]->setFromCC(value);
+        }
+    }
 
     Synth(const Synth&) = delete;
     Synth& operator=(const Synth&) = delete;
