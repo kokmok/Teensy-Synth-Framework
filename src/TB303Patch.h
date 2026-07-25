@@ -11,6 +11,7 @@ constexpr int OSC_PER_VOICE = 1;
 
 #include "Parameters/Filter.h"
 #include "Parameters/Envelope.h"
+#include "Parameters/Glide.h"
 #include <Audio.h>
 
 // --- Le son : réglages caractéristiques de la 303 ---
@@ -39,6 +40,7 @@ namespace Patch {
 
     inline Filter filter{ /* cutoffCC */ 1, /* resoCC */ 2 };
     inline Envelope envelope{ 5, 6, 7, 8 };
+    inline Glide    glide{ /* CC */ 3 };   // CC 5 = "Portamento Time", convention standard
     
     inline PatchDescriptor describe() {
         PatchDescriptor d;
@@ -54,6 +56,6 @@ namespace Patch {
     }
 
     // La table que handleCC balaie : on pointe vers les Parameter DANS le filtre.
-    inline Parameter* allParams[] = { &filter.cutoff, &filter.resonance, &envelope.attack, &envelope.decay, &envelope.sustain, &envelope.release };
-    inline constexpr int PARAM_COUNT = 6;
+    inline Parameter* allParams[] = { &filter.cutoff, &filter.resonance, &envelope.attack, &envelope.decay, &envelope.sustain, &envelope.release, &glide.time };
+    inline constexpr int PARAM_COUNT = 7;
 }
