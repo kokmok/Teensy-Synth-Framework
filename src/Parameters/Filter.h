@@ -23,7 +23,7 @@ private:
     float cutoffMin = 300.0f;    // Hz
     float cutoffMax = 8000.0f;   // Hz
     float resoMin   = 0.7f;
-    float resoMax   = 10.0f;
+    float resoMax   = 5.0f;
 
 public:
     Filter(uint8_t cutoffCC = 255, uint8_t resoCC = 255)

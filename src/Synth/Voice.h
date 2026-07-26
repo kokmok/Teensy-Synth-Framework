@@ -3,6 +3,8 @@
 #include "../Parameters/Parameter.h"
 
 class Voice {
+private: 
+    Waveform lastWaveform = Patch::waveform.get();
 public:
     // --- Objets audio, permanents ---
     AudioSynthWaveform      osc;    // oscillateur
@@ -24,7 +26,7 @@ public:
 
 
     Voice() {
-        osc.begin(WAVEFORM_SAWTOOTH);
+        osc.begin(Patch::waveform.toAudioLib());
         osc.amplitude(0.6f);
         osc.frequency(440.0f);
 
@@ -41,6 +43,10 @@ public:
     }
 
     void update(float dt) {
+        if (Patch::waveform.get() != lastWaveform) {
+            osc.begin(Patch::waveform.toAudioLib());
+            lastWaveform = Patch::waveform.get();
+        }
         if (currentNote != targetNote) {
             float tau = Patch::glide.timeConstant();   // relu en continu
             if (tau <= 0.0f) {
@@ -61,7 +67,6 @@ public:
         active = true;
 
         targetNote = (float)midiNote;
-        Serial.print(Patch::glide.timeConstant());
         if (Patch::glide.timeConstant() <= 0.0f) {
             currentNote = targetNote;              // pas de glide : saut immédiat
             osc.frequency(noteToFreq(currentNote));
